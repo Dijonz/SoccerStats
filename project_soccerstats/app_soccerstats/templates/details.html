@@ -3,14 +3,8 @@
 {% load custom_filters %}
 
 {% block content %}
-    <link rel="stylesheet" href="{% static 'css/details.css' %}">
-    <style>
-        /* Estilo para destacar o campo "Overall" */
-        .OverallHighlight {
-            color: #9cce4c; 
-            font-weight: bold;
-        }
-    </style>
+<link rel="stylesheet" href="{% static 'css/details.css' %}">
+   
 
     <section class="DetailSection">
         <div class="DetailContainer">
@@ -18,11 +12,12 @@
                 <img src="{{pic}}">
                 <h2>{{ jogador.Player }}</h2>
                 <p>Nação: {{ jogador.Nation }}</p>
+                <p>Time atual: {{ jogador.Squad }}</p>
                 <p>Posição: {{ jogador.Pos }}</p>
             </div>
             <div class="PlayerCard-R">
-                <h2>Nascimento: {{ jogador.Born }}</h2>
                 <h2 class="OverallHighlight">Nota: {{ jogador.Overall }}</h2>
+                <h2>Idade: {{ jogador.Age }}</h2>
                 <h2>Partidas Jogadas: {{ jogador.MP }}</h2>
                 {% if jogador.Pos == 'FW' %}
                         <h2>Chutes ao Gol: {{ jogador.SoT }}</h2>

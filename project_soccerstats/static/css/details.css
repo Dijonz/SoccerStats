@@ -20,7 +20,7 @@
 .DetailContainer {
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
     width: calc(100% - 40px); 
     height: calc(100% - 50px); 
     background-color: white;
@@ -96,4 +96,9 @@
     color: rgba(0, 0, 0, 0.575);
     background-color: rgba(255, 255, 255, 0.856);
     border-radius: 20px;
+}
+
+.OverallHighlight {
+    color: #9cce4c; 
+    font-weight: bold;
 }
