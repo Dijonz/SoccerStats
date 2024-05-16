@@ -1,28 +1,89 @@
 {% extends "base.html" %}
 {% load static %}
+{% load custom_filters %}
 
 {% block content %}
-    <link rel="stylesheet" href="{% static "css/details.css" %}">
+    <link rel="stylesheet" href="{% static 'css/details.css' %}">
+    <style>
+        /* Estilo para destacar o campo "Overall" */
+        .OverallHighlight {
+            color: #9cce4c; 
+            font-weight: bold;
+        }
+    </style>
 
     <section class="DetailSection">
         <div class="DetailContainer">
             <div class="PlayerCard-L">
-                <img src="{% static "img/Person.png" %}">
-                <h2> {{ jogador.nome }} </h2>
+                <img src="{{pic}}">
+                <h2>{{ jogador.Player }}</h2>
+                <p>Nação: {{ jogador.Nation }}</p>
+                <p>Posição: {{ jogador.Pos }}</p>
             </div>
             <div class="PlayerCard-R">
-                <h2> gols: {{ jogador.gols }} </h2>
-                <h2> passes: {{ jogador.passes }} </h2>
-                <h2> faltas: {{ jogador.faltas }} </h2>
-                <h2> função: {{ jogador.funcao }} </h2>
+                <h2>Nascimento: {{ jogador.Born }}</h2>
+                <h2 class="OverallHighlight">Nota: {{ jogador.Overall }}</h2>
+                <h2>Partidas Jogadas: {{ jogador.MP }}</h2>
+                {% if jogador.Pos == 'FW' %}
+                        <h2>Chutes ao Gol: {{ jogador.SoT }}</h2>
+                        <h2>Gols: {{ jogador.Goals }}</h2>
+                        <h2>Coversão de Gols: {{ jogador|get_item:"G/SoT" }}</h2>
+                        <h2>Assistências: {{ jogador.Assists }}</h2>
+                {% elif jogador.Pos == 'MF' %}
+                    <h2>Gols: {{ jogador.Goals }}</h2>
+                    <h2>PasTotCmp%: {{ jogador|get_item:"PasTotCmp%" }}</h2>
+                    <h2>PasTotDist: {{ jogador|get_item:"PasTotDist" }}</h2>
+                    <h2>Assistências: {{ jogador.Assists }}</h2>
+                {% elif jogador.Pos == 'DF' %}
+                    <h2>PasTotCmp: {{ jogador.PasTotCmp }}</h2>
+                    <h2>PasTotDist: {{ jogador.PasTotDist }}</h2>
+                    <h2>TklWon: {{ jogador|get_item:"TklWon" }}</h2>
+                    <h2>Tkl: {{ jogador.Tkl }}</h2>
+                {% elif jogador.Pos == 'DFMF' %}
+                    <h2>PasTotCmp: {{ jogador.PasTotCmp }}</h2>
+                    <h2>PasTotDist: {{ jogador.PasTotDist }}</h2>
+                    <h2>PasTotPrgDist: {{ jogador|get_item:"PasTotPrgDist" }}</h2>
+                    <h2>Tkl: {{ jogador.Tkl }}</h2>
+                {% elif jogador.Pos == 'MFDF' %}
+                    <h2>Goals: {{ jogador.Goals }}</h2>
+                    <h2>Shots: {{ jogador.Shots }}</h2>
+                    <h2>SoT: {{ jogador.SoT }}</h2>
+                    <h2>G/SoT: {{ jogador|get_item:"G/SoT" }}</h2>
+                {% elif jogador.Pos == 'DFFW' %}
+                    <h2>PasTotCmp: {{ jogador.PasTotCmp }}</h2>
+                    <h2>PasTotDist: {{ jogador.PasTotDist }}</h2>
+                    <h2>PasTotPrgDist: {{ jogador|get_item:"PasTotPrgDist" }}</h2>
+                    <h2>Tkl: {{ jogador.Tkl }}</h2>
+                {% elif jogador.Pos == 'FWMF' %}
+                    <h2>Goals: {{ jogador.Goals }}</h2>
+                    <h2>Shots: {{ jogador.Shots }}</h2>
+                    <h2>G/SoT: {{ jogador|get_item:"G/SoT" }}</h2>
+                    <h2>ShoDist: {{ jogador.ShoDist }}</h2>
+                {% elif jogador.Pos == 'FWDF' %}
+                    <h2>Goals: {{ jogador.Goals }}</h2>
+                    <h2>Shots: {{ jogador.Shots }}</h2>
+                    <h2>Coversão de Gols: {{ jogador|get_item:"G/SoT" }}</h2>
+                    <h2>SoT: {{ jogador.SoT }}</h2>
+                {% elif jogador.Pos == 'MFFW' %}
+                    <h2>Goals: {{ jogador.Goals }}</h2>
+                    <h2>Shots: {{ jogador.Shots }}</h2>
+                    <h2>Conversão de Gols: {{ jogador|get_item:"G/SoT" }}</h2>
+                    <h2>SoT: {{ jogador.SoT }}</h2>
+                {% elif jogador.Pos == 'GK' %}
+                    <h2>PasTotCmp: {{ jogador.PasTotCmp }}</h2>
+                    <h2>PasTotDist: {{ jogador.PasTotDist }}</h2>
+                    <h2>PasTotPrgDist: {{ jogador|get_item:"PasTotPrgDist" }}</h2>
+                    <h2>Blocks: {{ jogador.Blocks }}</h2>
+                {% endif %}
             </div>
         </div>
 
         <div class="Recommendations">
+            <h2>Jogadores similares:</h2>
             {% for jogadorR in jogadores %}
-                <a href="{% url "details" jogadorR.id %}">
-                    <h2> {{ jogadorR.nome }} </h2>
-                    <h2> nota: 10 </h2>
+                <a href="{% url 'details' jogadorR.Rk %}">
+                    <h3>{{ jogadorR.Player }}</h3>
+                    <p class="OverallHighlight">Nota: {{ jogadorR.Overall}}</p>
                 </a>
             {% endfor %}
         </div>

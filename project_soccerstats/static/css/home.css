@@ -1,22 +1,20 @@
 .HomeSection {
-    position: absolute;
+    position: fixed; 
+    bottom: 0; 
+    left: 0;
+    width: 100vw; 
+    height: calc(100vh - 50px); 
     padding: 10px;
-    top: 50%;
-    left: 50%;
-    width: 700px;
-    height: 700px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     gap: 7px;
-    overflow: auto;
-    scrollbar-width: none;
-    transform: translate(-50%, -50%);
+    overflow-y: auto; 
+    scrollbar-width: thin;
     background-color: rgba(255, 255, 255, 0.678);
     border-radius: 15px;
 }
-
 .Search {
     display: flex;
     align-items: center;
@@ -61,7 +59,7 @@
 .PlayerCard {
     display: flex;
     padding: 10px;
-    width: 650px;
+    width: calc(100% - 20px);
     height: 100px;
     gap: 15px;
     flex-shrink: 0;

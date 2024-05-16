@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app_soccerstats'
+    'app_soccerstats'   
 ]
 
 MIDDLEWARE = [
@@ -126,3 +126,9 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Path to CSV FILE
+CSV_ROOT = 'app_soccerstats//data//dfSoccerStats2.csv'
+
+GOOGLE_API_KEY = "AIzaSyAa_ww9x_WguD6T8fyaWc64fLCK0V1UqPk"
+GOOGLE_SEARCH_ENGINE_ID = "477f17c1916ad40ba"

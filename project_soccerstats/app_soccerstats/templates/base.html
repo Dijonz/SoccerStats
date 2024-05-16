@@ -7,13 +7,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <title>SoccerStats</title>
+    <style>
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+        }
+
+        .closeButton {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <header class="Header">
         <a href="/" class="Logo">SoccerStats</a>
 
         <nav class="Navbar">
-            <div><a href="#">Jogadores</a></div>
+            <div><a href="#" id="dicionarioPosicao">Dicionário Posições</a></div>
             <div><a href="#">Times</a></div>
             <div><a href="#">Jogos</a></div>
         </nav>
@@ -21,5 +42,47 @@
 
     {% block content %}
     {% endblock content %}
+
+
+    <div id="meuPopup" class="popup">
+        <span class="closeButton" id="fecharPopup">X</span>
+        <h2>Dicionário de Posição</h2>
+        <p>FW = Atacante</p>
+        <p>MF = Meia Atacante</p>
+        <p>DF = Zagueiro</p>
+        <p>GK = Goleiro</p>
+        <p>DFMF = Volante</p>
+        <p>MFDF = Meia/Defensor</p>
+        <p>DFFW = Defensor/Atacante</p>
+        <p>FWMF = Atacante/Meia</p>
+        <p>FWDF = Atacante/Defensor</p>
+        <p>MFFW = Meia/Atacante</p>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Ao clicar no link "Dicionário posição", exibir o popup
+            $("#dicionarioPosicao").click(function(event) {
+                // Prevenir o comportamento padrão do link
+                event.preventDefault();
+                // Exibir o popup
+                $("#meuPopup").show();
+            });
+
+            // Ao clicar no botão de fechar, fechar o popup
+            $("#fecharPopup").click(function() {
+                $("#meuPopup").hide();
+            });
+
+            // Ao clicar fora do popup, fechar o popup
+            $(document).click(function(event) {
+                if (!$(event.target).closest('#meuPopup').length && !$(event.target).is('#dicionarioPosicao')) {
+                    $("#meuPopup").hide();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
