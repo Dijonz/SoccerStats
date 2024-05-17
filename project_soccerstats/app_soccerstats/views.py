@@ -139,16 +139,23 @@ def calculo_jogadores_recomendados(nome_jogador,df, metric):
 
 
 def home(request):
-    query = request.POST.get('query')
+    query = request.POST.get('query', '').strip()  # Remover espaços em branco do início e do fim
     listaJogadores = []
 
     if query:
-        listaJogadores = jogador_collection.find({"Player": query})
+        # Usar expressão regular para buscar jogadores que contenham a parte do nome digitado pelo usuário
+        listaJogadores = jogador_collection.find({"Player": {"$regex": query, "$options": "i"}})
     else:
         listaJogadores = jogador_collection.find({})
 
     context = {"jogadores": listaJogadores}
+
+    # Verificar se a lista de jogadores está vazia
+    if not listaJogadores:
+        context["mensagem"] = "Jogador não encontrado."
+        
     return render(request, 'home.html', context)
+
 
 def details(request, id):
     jogador = jogador_collection.find_one({"Rk": int(id)})

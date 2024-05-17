@@ -15,15 +15,16 @@
             {% for jogador in jogadores %}
                 <a class="PlayerCard" href="{% url 'details' jogador.Rk %}">
                     <h2>{{ jogador.Player }}</h2>
+                    <p>Nota: {{ jogador.Overall }}</p>
                     <p>Nação: {{ jogador.Nation }}</p>
                     <p>Time: {{ jogador.Squad }}</p>
                     <p>Posição: {{ jogador.Pos }}</p>
                 </a>
             {% endfor %}
         {% else %}
-            <div class="PlayerCard">
-                <h2>Nenhum jogador encontrado</h2>
-            </div>
+            <a class="PlayerCard">
+                <h2>{{ mensagem }}</h2>
+            </a>
         {% endif %}
     </section>
 {% endblock content %}
