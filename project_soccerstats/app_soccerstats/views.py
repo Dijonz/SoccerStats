@@ -167,7 +167,8 @@ def details(request, id):
     jogador = jogador_collection.find_one({"Rk": int(id)})
     df = pd.read_csv(CSV_ROOT, sep=';', encoding="utf-8")
     
-    player_image = search_image(jogador)
+    ##player_image = search_image(jogador)
+    player_image = 'static//img//Person.png'
     plot_graph(jogador['Player'])
 
     if jogador:
