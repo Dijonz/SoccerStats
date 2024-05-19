@@ -3,14 +3,20 @@ from .models import jogador_collection
 from django.http import HttpResponse
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
-from project_soccerstats.settings import CSV_ROOT, GOOGLE_SEARCH_ENGINE_ID, GOOGLE_API_KEY
+from project_soccerstats.settings import CSV_ROOT, GOOGLE_SEARCH_ENGINE_ID, GOOGLE_API_KEY, CSV_SCALED, IMG_GRAPH
+import matplotlib.pyplot as plt, mpld3
 import numpy as np
 import pandas as pd
-import requests
+
+## Comando para instalar: pip install plotly==5.22.0
+import plotly.express as px
+import plotly.graph_objs as go
+import plotly.io as pio
+
 ## Comando pra instalar: pip install google-api-python-client
 from googleapiclient.discovery import build
 
-
+## Colem no terminal caso não tenha instalado ainda: pip install -U kaleido    
 
 fw_features1 = ["Goals", "Shots", "SoT", "G/Sh", "G/SoT", "ShoDist", "GCA", "SCA", "Off", "PKwon", "ScaDrib", "Assists",
                     "ScaPassLive", "Car3rd", "ScaFld", "ToAtt", "ToSuc", "Carries", "CarTotDist", "CarPrgDist", 'CPA', "CarMis", "CarDis","PasTotCmp"]
@@ -162,6 +168,7 @@ def details(request, id):
     df = pd.read_csv(CSV_ROOT, sep=';', encoding="utf-8")
     
     player_image = search_image(jogador)
+    plot_graph(jogador['Player'])
 
     if jogador:
         jogadores_recomendados_nomes = calculo_jogadores_recomendados(jogador['Player'], df, "manhattan")
@@ -203,7 +210,7 @@ def search_image(jogador):
     # Busca pela imagem
     resultados = servico.cse().list(
         q=termo,                # nome do jogador
-        cx=id_pesquisa,
+        cx=id_pesquisa,         # ID de pesquisa da google
         searchType='image',     # tipo de retorno
         num=1                   # n de imagens a serem retornadas
     ).execute()
@@ -212,4 +219,45 @@ def search_image(jogador):
         return resultados['items'][0]['link']
     else:
         return None
+    
+def plot_graph(jogador):
 
+    scaled_df = pd.read_csv(CSV_SCALED)
+    player_data = scaled_df.loc[scaled_df['Player'] == jogador]
+
+    features = []
+
+    if player_data['Pos'].iloc[0] == 'FWDF':
+        features = ['Assists', 'Goals', 'SoT', 'AerWon', 'Recov']
+
+    elif player_data['Pos'].iloc[0] == 'DFMF':
+        features = ["Recov", "TklWon", "Assists", "TklDri", "Blocks"]
+
+    elif player_data['Pos'].iloc[0] == 'MFDF':
+        features = ["Goals", "ShoDist", "TklWon", "Assists"]
+        
+    elif player_data['Pos'].iloc[0] == 'DFFW':
+        features = ["PasTotCmp%", "TklWon", "Assists"]
+        
+    elif player_data['Pos'].iloc[0] == 'MFFW':
+        features = ["Goals", "ShoDist", "PKwon", "Assists", "PasAss", "Carries"]
+
+    elif player_data['Pos'].iloc[0] == 'FWMF':
+        features = ["Goals", "ShoDist", "PKwon", "Assists", "PasAss"]
+
+    elif player_data['Pos'].iloc[0] == 'DF':
+        features = ["AerWon", "Recov", "TklWon", "Assists", "TklDri", "Blocks"]
+
+    elif player_data['Pos'].iloc[0] == 'MF':
+        features = ["Assists", "SCA", "TklDri", "Goals"]
+
+    elif player_data['Pos'].iloc[0] == 'FW':
+        features = ['Goals', 'Shots', 'SoT']
+
+    player_graph_stats = player_data[features]
+    player_graph_stats = player_graph_stats.transpose()
+    player_graph_stats = player_graph_stats.reset_index()
+    player_graph_stats = player_graph_stats.rename(columns = {player_graph_stats.columns[0]: 'stats', player_graph_stats.columns[1]: 'numbers'})
+
+    fig = px.line_polar(player_graph_stats, r="numbers", theta="stats", line_close = True)
+    fig.write_image(IMG_GRAPH)

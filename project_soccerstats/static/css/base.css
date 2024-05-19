@@ -54,8 +54,8 @@ body {
 .Navbar div a {
     font-size: 18px;
     font-weight: bold;
-    color: white;
-    text-decoration: none;
+    color: rgb(255, 255, 255);
+    text-decoration:none;
     transition: .4s ease;
 }
 

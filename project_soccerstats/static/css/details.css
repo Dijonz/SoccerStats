@@ -50,6 +50,12 @@
     height: 336px;
 }
 
+.PlayerGraph {
+    padding: 10px;
+    width: 470px;
+    height: 470px;
+}
+
 .PlayerCard-R {
     display: flex;
     flex-direction: column;
