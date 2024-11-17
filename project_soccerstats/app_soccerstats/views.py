@@ -3,7 +3,7 @@ from .models import jogador_collection
 from django.http import HttpResponse
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
-from project_soccerstats.settings import CSV_ROOT, GOOGLE_SEARCH_ENGINE_ID, GOOGLE_API_KEY, CSV_SCALED, IMG_GRAPH
+from project_soccerstats.settings import CSV_ROOT, GOOGLE_SEARCH_ENGINE_ID, GOOGLE_API_KEY, CSV_SCALED, IMG_GRAPH, CSV_VALUATION, CSV_PREDICTION, IMG_GRAPH2
 import matplotlib.pyplot as plt, mpld3
 import numpy as np
 import pandas as pd
@@ -16,7 +16,7 @@ import plotly.io as pio
 ## Comando pra instalar: pip install google-api-python-client
 from googleapiclient.discovery import build
 
-## Colem no terminal caso não tenha instalado ainda: pip install -U kaleido    
+## Colem no terminal caso não tenha instalado ainda: pip install -U kaleido==0.2.1
 
 fw_features1 = ["Goals", "Shots", "SoT", "G/Sh", "G/SoT", "ShoDist", "GCA", "SCA", "Off", "PKwon", "ScaDrib", "Assists",
                     "ScaPassLive", "Car3rd", "ScaFld", "ToAtt", "ToSuc", "Carries", "CarTotDist", "CarPrgDist", 'CPA', "CarMis", "CarDis","PasTotCmp"]
@@ -49,6 +49,8 @@ mffw_features1= ["Goals", "Shots", "SoT", "G/Sh", "G/SoT", "ShoDist", "SCA", "Of
                        "GcaPassDead", "GcaDrib", "GcaSh", "GcaFld", "Tkl", "TklWon", "TklDef3rd", "TklMid3rd", "TklAtt3rd", "TklDri",
                        "TklDriAtt", "TklDri%"]
 
+df_0 = pd.read_csv(CSV_PREDICTION, sep=':', encoding='ISO-8859-1')
+df_1 = pd.read_csv(CSV_VALUATION, sep=';', encoding='ISO-8859-1')
 
 def features_por_posicao(posicao):
     if posicao == 'FW':
@@ -170,6 +172,7 @@ def details(request, id):
     ##player_image = search_image(jogador)
     player_image = 'static//img//Person.png'
     plot_graph(jogador['Player'])
+    plot_variation_for_player(df_0, df_1, jogador['Player'])
 
     if jogador:
         jogadores_recomendados_nomes = calculo_jogadores_recomendados(jogador['Player'], df, "manhattan")
@@ -220,7 +223,7 @@ def search_image(jogador):
         return resultados['items'][0]['link']
     else:
         return None
-    
+   
 def plot_graph(jogador):
 
     scaled_df = pd.read_csv(CSV_SCALED)
@@ -262,3 +265,42 @@ def plot_graph(jogador):
 
     fig = px.line_polar(player_graph_stats, r="numbers", theta="stats", line_close = True)
     fig.write_image(IMG_GRAPH)
+
+#Plotar gráfico de variação de valor
+def plot_variation_for_player(df1, df2, player_name):
+
+    df1 = df_1
+    df2 = df_0
+
+    if player_name not in df1['Player'].values:
+        print(f"O jogador {player_name} não foi encontrado no DataFrame.")
+        return
+
+    print(f"JOGADOR: {player_name}.")
+
+    values = df1[df1['Player'] == player_name]['Value']
+    dates_real = df1[df1['Player'] == player_name]['Date']
+
+    predicted_value = df2[df2['Player'] == player_name]['Value'].values[0]
+    date_predicted = df2[df2['Player'] == player_name]['Date'].values[0]
+
+    # Criar a figura
+    fig = go.Figure()
+
+    # Adicionar linha de valores reais
+    fig.add_trace(go.Scatter(x=dates_real, y=values, mode='lines', name='Valores Reais', line=dict(color='blue')))
+
+    # Adicionar ponto de valor predito
+    fig.add_trace(go.Scatter(x=[date_predicted], y=[predicted_value], mode='markers', name='Valor Predito',
+                             marker=dict(color='red', size=10)))
+
+    # Configurações do gráfico
+    fig.update_layout(
+        title=f"Variação de Valor: {player_name}",
+        xaxis_title="Data",
+        yaxis_title="Valor",
+        legend_title=f"Último valor real: {values.iloc[-1]}, próximo valor predito: {predicted_value}",
+        xaxis_tickangle=45,
+        template="plotly_white"
+    )
+    fig.write_image(IMG_GRAPH2)

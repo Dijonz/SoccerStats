@@ -130,8 +130,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Path to CSV FILE
 CSV_ROOT = 'app_soccerstats//data//dfSoccerStats2.csv'
 CSV_SCALED = 'app_soccerstats//data//df_normalized_per_postion.csv'
+CSV_VALUATION = 'app_soccerstats//data//dfCompleteValuation.csv'
+CSV_PREDICTION = 'app_soccerstats//data//dfValuationPrediction000.csv'
 
 IMG_GRAPH = 'static//img//plot.png'
+IMG_GRAPH2 = 'static//img//plot2.png'
 
 GOOGLE_API_KEY = "AIzaSyAa_ww9x_WguD6T8fyaWc64fLCK0V1UqPk"
 GOOGLE_SEARCH_ENGINE_ID = "477f17c1916ad40ba"
