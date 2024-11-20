@@ -147,59 +147,69 @@ def calculo_jogadores_recomendados(nome_jogador,df, metric):
 
 
 def home(request):
-    query = request.POST.get('query', '').strip()  # Remover espaços em branco do início e do fim
-    listaJogadores = []
+    # Carregar o CSV
+    try:
+        df = pd.read_csv(CSV_ROOT, sep=';', encoding="ISO-8859-1")
+    except Exception as e:
+        return render(request, 'home.html', {"mensagem": "Erro ao carregar o arquivo CSV: " + str(e)})
 
-    if query:
-        # Usar expressão regular para buscar jogadores que contenham a parte do nome digitado pelo usuário
-        listaJogadores = jogador_collection.find({"Player": {"$regex": query, "$options": "i"}})
-    else:
-        listaJogadores = jogador_collection.find({})
+    # Obter a lista de jogadores
+    listaJogadores = df.to_dict(orient='records')
 
+    # Contexto a ser enviado para o template
     context = {"jogadores": listaJogadores}
 
-    # Verificar se a lista de jogadores está vazia
-    if not listaJogadores:
-        context["mensagem"] = "Jogador não encontrado."
-        
     return render(request, 'home.html', context)
 
 
 def details(request, id):
-    jogador = jogador_collection.find_one({"Rk": int(id)})
-    df = pd.read_csv(CSV_ROOT, sep=';', encoding="utf-8")
-    
-    ##player_image = search_image(jogador)
-    player_image = 'static//img//Person.png'
-    plot_graph(jogador['Player'])
-    plot_variation_for_player(df_0, df_1, jogador['Player'])
+    # Carregar o CSV
+    try:
+        df = pd.read_csv(CSV_ROOT, sep=';', encoding="ISO-8859-1")
+    except Exception as e:
+        return HttpResponse(f"Erro ao carregar o arquivo CSV: {str(e)}", status=500)
 
-    if jogador:
-        jogadores_recomendados_nomes = calculo_jogadores_recomendados(jogador['Player'], df, "manhattan")
-        jogadores_recomendados_dados = []
-   
-        
-        
-        for nome_jogador in jogadores_recomendados_nomes[1:]:
-            jogador_recomendado = jogador_collection.find_one({"Player": nome_jogador})
-            if jogador_recomendado:
-                jogadores_recomendados_dados.append(jogador_recomendado)
-       
-
-        player_features = player_top_features(jogador['Player'], df)
-        
-       
-        top_features = [(feature, value) for feature, value in player_features.items()][:3]
-        print(top_features)
-        worst_features = [(feature, value) for feature, value in player_features.items()][3:]
-        print(worst_features)
-            
-        
-        context = {"jogador": jogador, "jogadores": jogadores_recomendados_dados, "top_features":top_features,"worst_features":worst_features, "pic":player_image}
-
-        return render(request, 'details.html', context)
-    else:
+    # Obter o jogador pelo ID
+    try:
+        jogador = df[df['Rk'] == int(id)].iloc[0]  # Buscar jogador pelo valor de 'Rk'
+    except IndexError:
         return HttpResponse("Player not found", status=404)
+    print(jogador)
+    # Imagem padrão do jogador
+    player_image = 'static/img/Person.png'
+
+    # Gerar os gráficos relacionados ao jogador
+    plot_graph(jogador['Player'])
+    plot_variation_for_player(df, None, jogador['Player'])  # Substitua df_0 e df_1 se necessário
+
+    # Recomendar jogadores com base no cálculo da distância
+    jogadores_recomendados_nomes = calculo_jogadores_recomendados(jogador['Player'], df, "manhattan")
+    jogadores_recomendados_dados = []
+
+    # Buscar os jogadores recomendados diretamente do CSV
+    for nome_jogador in jogadores_recomendados_nomes[1:]:
+        recomendado = df[df['Player'] == nome_jogador]
+        if not recomendado.empty:
+            jogadores_recomendados_dados.append(recomendado.iloc[0].to_dict())
+
+    # Obter as principais características do jogador
+    player_features = player_top_features(jogador['Player'], df)
+
+    # Separar melhores e piores características
+    print(player_features)
+    top_features = [(feature, value) for feature, value in player_features.items()][:3]
+    worst_features = [(feature, value) for feature, value in player_features.items()][3:]
+
+    # Contexto para o template
+    context = {
+        "jogador": jogador.to_dict(),
+        "jogadores": jogadores_recomendados_dados,
+        "top_features": top_features,
+        "worst_features": worst_features,
+        "pic": player_image
+    }
+
+    return render(request, 'details.html', context)
     
     
 def search_image(jogador):
@@ -264,6 +274,15 @@ def plot_graph(jogador):
     player_graph_stats = player_graph_stats.rename(columns = {player_graph_stats.columns[0]: 'stats', player_graph_stats.columns[1]: 'numbers'})
 
     fig = px.line_polar(player_graph_stats, r="numbers", theta="stats", line_close = True)
+    fig.update_layout(
+    polar=dict(
+        radialaxis=dict(
+        visible=True,
+        range=[0, 1]
+        )),
+    plot_bgcolor='rgba(255, 255, 255, 0.0)',  # Fundo do gráfico com 30% de opacidade
+    paper_bgcolor='rgba(255, 255, 255, 0.5)'  # Fundo geral com 30% de opacidade
+    )
     fig.write_image(IMG_GRAPH)
 
 #Plotar gráfico de variação de valor
@@ -284,23 +303,26 @@ def plot_variation_for_player(df1, df2, player_name):
     predicted_value = df2[df2['Player'] == player_name]['Value'].values[0]
     date_predicted = df2[df2['Player'] == player_name]['Date'].values[0]
 
-    # Criar a figura
     fig = go.Figure()
 
-    # Adicionar linha de valores reais
     fig.add_trace(go.Scatter(x=dates_real, y=values, mode='lines', name='Valores Reais', line=dict(color='blue')))
 
-    # Adicionar ponto de valor predito
     fig.add_trace(go.Scatter(x=[date_predicted], y=[predicted_value], mode='markers', name='Valor Predito',
                              marker=dict(color='red', size=10)))
 
-    # Configurações do gráfico
     fig.update_layout(
-        title=f"Variação de Valor: {player_name}",
-        xaxis_title="Data",
-        yaxis_title="Valor",
-        legend_title=f"Último valor real: {values.iloc[-1]}, próximo valor predito: {predicted_value}",
-        xaxis_tickangle=45,
-        template="plotly_white"
+    xaxis_title="Data",
+    yaxis_title="Valor",
+    title=f"Variação de valor do jogador {player_name}",
+    legend=dict(
+        yanchor="top",  # Alinha a legenda pelo topo
+        y=-0.3,         # Posiciona a legenda abaixo do gráfico
+        xanchor="center",  # Centraliza a legenda horizontalmente
+        x=0.5           # Centraliza em relação ao eixo x
+    ),
+    xaxis_tickangle=45,
+    template="plotly_white",
+    plot_bgcolor='rgba(255, 255, 255, 0.0)',  
+    paper_bgcolor='rgba(255, 255, 255, 0.5)'  
     )
     fig.write_image(IMG_GRAPH2)

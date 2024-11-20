@@ -1,33 +1,3 @@
-.DetailSection {
-    position: fixed;
-    padding: 10px;
-    top: 20;
-    left: 0;
-    width: 100%;
-    height: calc(100% - 50px); 
-    bottom: 0; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    overflow-y: auto; 
-    scrollbar-width: thin;
-    background-color: rgba(255, 255, 255, 0.678);
-    border-radius: 15px;
-}
-
-.DetailContainer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: calc(100% - 40px); 
-    height: calc(100% - 50px); 
-    background-color: white;
-    border-radius: 15px;
-    padding: 0 20px; 
-}
-
 .PlayerCard-L {
     display: flex;
     flex-direction: column;
@@ -52,20 +22,22 @@
 
 .PlayerGraph {
     padding: 10px;
-    width: 470px;
-    height: 470px;
+    width: fit-content;
+    height: fit-content;
 }
 
-.PlayerGraph, .PredictionGraph {
-    width: 48%;
+.PredictionGraph {
+    padding: 10px;
+    width: fit-content;
+    height: fit-content;
 }
 
 .PlayerCard-R {
     display: flex;
     flex-direction: column;
     padding: 10px;
-    width: 320px;
-    height: 470px;
+    width: 350px;
+    height:100%;
     gap: 15px;
     flex-shrink: 0;
     align-items: center;
@@ -73,8 +45,19 @@
     text-decoration: none;
     color: rgb(49, 49, 49);
     border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.527);
     border: none;
     transition: ease 0.3s;
+}
+
+.PlayerInfos{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
 }
 
 .Recommendations {
@@ -92,6 +75,8 @@
     background-color: rgba(255, 255, 255, 0.527);
     border-radius: 20px;
 }
+
+
 
 .Recommendations a {
     display: flex;
@@ -113,7 +98,94 @@
     font-weight: bold;
 }
 
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px;
+    background-color: #f0f0f0;
+    margin: 0;
+}
+
+.DetailSection {
+    padding: 20px;
+    width: 95%;
+    max-width: 1800px; 
+    height: 90%; 
+    max-height: 95vh; 
+    overflow-y: auto;
+    scrollbar-width: thin;
+    background-color: rgba(255, 255, 255, 0.651);
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.DetailContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    
+    gap: 30px;
+    width: 100%;
+    max-width: 1700px; 
+}
+
+
+.PlayerGraph img,
+.PredictionGraph img {
+    width: z; 
+    max-width: 100%; 
+    height: auto; 
+    border-radius: 5%;
+}
+
 .GraphsContainer {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: start;
+    width: 100%;
+    height: 100%;
 }
+
+.FeaturesSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: fit-content;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: rgba(240, 240, 240, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.FeaturesSection h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+        color: #333;
+    }
+
+.BiggestFeaturesList,
+.SmallestFeaturesList {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.BiggestFeaturesList li,
+.SmallestFeaturesList li {
+    font-size: 0.8em;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 10px;
+    background-color: #cdcdcf;
+}
+
+
+
