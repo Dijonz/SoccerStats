@@ -151,19 +151,22 @@ def home(request):
     try:
         df = pd.read_csv(CSV_ROOT, sep=';', encoding="ISO-8859-1")
     except Exception as e:
-        return render(request, 'home.html', {"mensagem": "Erro ao carregar o arquivo CSV: " + str(e)})
+        return render(request, 'home.html', {"mensagem": f"Erro ao carregar o arquivo CSV: {str(e)}"})
 
-    # Obter a lista de jogadores
+    query = request.POST.get('query', '').strip()
+    if query:
+        df = df[df['Player'].str.contains(query, case=False, na=False)] 
+
+    # Preparar lista de jogadores ou mensagem de erro
     listaJogadores = df.to_dict(orient='records')
+    if not listaJogadores:
+        return render(request, 'home.html', {"mensagem": "Nenhum jogador encontrado com o nome pesquisado."})
 
-    # Contexto a ser enviado para o template
     context = {"jogadores": listaJogadores}
-
     return render(request, 'home.html', context)
 
 
 def details(request, id):
-    # Carregar o CSV
     try:
         df = pd.read_csv(CSV_ROOT, sep=';', encoding="ISO-8859-1")
     except Exception as e:
@@ -182,20 +185,16 @@ def details(request, id):
     plot_graph(jogador['Player'])
     plot_variation_for_player(df, None, jogador['Player'])  # Substitua df_0 e df_1 se necessário
 
-    # Recomendar jogadores com base no cálculo da distância
     jogadores_recomendados_nomes = calculo_jogadores_recomendados(jogador['Player'], df, "manhattan")
     jogadores_recomendados_dados = []
 
-    # Buscar os jogadores recomendados diretamente do CSV
     for nome_jogador in jogadores_recomendados_nomes[1:]:
         recomendado = df[df['Player'] == nome_jogador]
         if not recomendado.empty:
             jogadores_recomendados_dados.append(recomendado.iloc[0].to_dict())
 
-    # Obter as principais características do jogador
     player_features = player_top_features(jogador['Player'], df)
 
-    # Separar melhores e piores características
     print(player_features)
     top_features = [(feature, value) for feature, value in player_features.items()][:3]
     worst_features = [(feature, value) for feature, value in player_features.items()][3:]
