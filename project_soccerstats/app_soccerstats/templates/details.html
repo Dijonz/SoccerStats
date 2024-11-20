@@ -9,12 +9,17 @@
     <section class="DetailSection">
         <div class="DetailContainer">
             <div class="PlayerCard-L">
-                <img src="{{pic}}">
+                <img src="{% static 'img/not_found.jpg' %}">
                 <h2>{{ jogador.Player }}</h2>
                 <p>Nação: {{ jogador.Nation }}</p>
-                <p>Time atual: {{ jogador.Squad }}</p>
-                <p>Posição: {{ jogador.Pos }}</p>
+
+                <p>Posição: {{ jogador.Pos }}</p>                
             </div>
+
+            <div class="TeamLogo">
+                <img src="{% static 'img/Logos/' %}{{ team_logo|slugify|add:'.png' }}">
+            </div>
+            <p class="TeamName">{{ jogador.Squad }}</p>
 
             <div class="GraphsContainer">
                 <div class="PlayerGraph">
@@ -101,9 +106,7 @@
                         <h2>Blocks: {{ jogador.Blocks }}</h2>
                     {% endif %}
                 </div>
-            </div>
-
-            
+            </div>         
         </div>
 
         

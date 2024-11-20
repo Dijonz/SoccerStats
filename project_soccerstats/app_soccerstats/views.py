@@ -7,6 +7,8 @@ from project_soccerstats.settings import CSV_ROOT, GOOGLE_SEARCH_ENGINE_ID, GOOG
 import matplotlib.pyplot as plt, mpld3
 import numpy as np
 import pandas as pd
+import re
+import os
 
 ## Comando para instalar: pip install plotly==5.22.0
 import plotly.express as px
@@ -75,7 +77,7 @@ def features_por_posicao(posicao):
       return mffw_features1
     else:
         return None
-    
+
 #Cálculo das carcterísticas mais destacadas de determinado jogador
 def calculo_player_top_features(nome_jogador, df):
     jogadores_filtrados, features, dados_jogador = filtragem_pos_clus(nome_jogador, df)
@@ -95,7 +97,7 @@ def calculo_player_top_features(nome_jogador, df):
 
 #Retorno para vizualição das top features
 def player_top_features(nome_jogador, df):
-  
+
     top_features, shit_features = calculo_player_top_features(nome_jogador, df)
 
     tpf = []
@@ -114,7 +116,7 @@ def player_top_features(nome_jogador, df):
 #Retorna todo o um cluster específico de uma posição a partir de um jogador específico
 def filtragem_pos_clus(nome_jogador,df):
     dados_jogador = df[df['Player'] == nome_jogador]
-                       
+
     posicao_jogador = dados_jogador['Pos'].iloc[0]
     cluster_jogador = dados_jogador['Cluster'].iloc[0]
 
@@ -155,7 +157,7 @@ def home(request):
 
     query = request.POST.get('query', '').strip()
     if query:
-        df = df[df['Player'].str.contains(query, case=False, na=False)] 
+        df = df[df['Player'].str.contains(query, case=False, na=False)]
 
     # Preparar lista de jogadores ou mensagem de erro
     listaJogadores = df.to_dict(orient='records')
@@ -164,7 +166,6 @@ def home(request):
 
     context = {"jogadores": listaJogadores}
     return render(request, 'home.html', context)
-
 
 def details(request, id):
     try:
@@ -179,7 +180,9 @@ def details(request, id):
         return HttpResponse("Player not found", status=404)
     print(jogador)
     # Imagem padrão do jogador
-    player_image = 'static/img/Person.png'
+    #player_image = NOT_FOUND_IMG
+    team_logo = jogador['Squad']
+    print(team_logo)
 
     # Gerar os gráficos relacionados ao jogador
     plot_graph(jogador['Player'])
@@ -205,12 +208,13 @@ def details(request, id):
         "jogadores": jogadores_recomendados_dados,
         "top_features": top_features,
         "worst_features": worst_features,
-        "pic": player_image
+        #"pic": player_image,
+        "team_logo": team_logo,
     }
 
     return render(request, 'details.html', context)
-    
-    
+
+
 def search_image(jogador):
 
     termo = jogador["Player"]
@@ -232,7 +236,7 @@ def search_image(jogador):
         return resultados['items'][0]['link']
     else:
         return None
-   
+
 def plot_graph(jogador):
 
     scaled_df = pd.read_csv(CSV_SCALED)
@@ -248,10 +252,10 @@ def plot_graph(jogador):
 
     elif player_data['Pos'].iloc[0] == 'MFDF':
         features = ["Goals", "ShoDist", "TklWon", "Assists"]
-        
+
     elif player_data['Pos'].iloc[0] == 'DFFW':
         features = ["PasTotCmp%", "TklWon", "Assists"]
-        
+
     elif player_data['Pos'].iloc[0] == 'MFFW':
         features = ["Goals", "ShoDist", "PKwon", "Assists", "PasAss", "Carries"]
 
@@ -321,7 +325,7 @@ def plot_variation_for_player(df1, df2, player_name):
     ),
     xaxis_tickangle=45,
     template="plotly_white",
-    plot_bgcolor='rgba(255, 255, 255, 0.0)',  
-    paper_bgcolor='rgba(255, 255, 255, 0.5)'  
+    plot_bgcolor='rgba(255, 255, 255, 0.0)',
+    paper_bgcolor='rgba(255, 255, 255, 0.5)'
     )
     fig.write_image(IMG_GRAPH2)

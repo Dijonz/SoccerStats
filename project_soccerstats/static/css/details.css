@@ -17,7 +17,17 @@
 
 .PlayerCard-L img {
     width: 252px;
-    height: 336px;
+    height: 334px;
+}
+
+.TeamLogo img {
+    display: block;
+    margin: 0 auto 10px auto; /* Center the logo and add some margin below */
+}
+
+.TeamName {
+    text-align: left; /* Align the text to the left */
+    margin-top: 0; /* Remove any top margin */
 }
 
 .PlayerGraph {
@@ -104,7 +114,7 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 30px;
-    background-color: #f0f0f0;
+    background-color: #18191E;
     margin: 0;
 }
 
@@ -138,6 +148,7 @@ body {
     max-width: 100%; 
     height: auto; 
     border-radius: 5%;
+    /* background-color: #33383F; */
 }
 
 .GraphsContainer {
