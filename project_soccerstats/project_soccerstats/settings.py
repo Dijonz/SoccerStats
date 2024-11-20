@@ -136,6 +136,7 @@ CSV_PREDICTION = 'app_soccerstats//data//dfValuationPrediction000.csv'
 PLAYER_PIC = 'static//img//not_foung.jpg'
 IMG_GRAPH = 'static//img//plot.png'
 IMG_GRAPH2 = 'static//img//plot2.png'
+IMG_GRAPH3 = 'static//img//plot3.png'
 
 
 GOOGLE_API_KEY = "AIzaSyAa_ww9x_WguD6T8fyaWc64fLCK0V1UqPk"

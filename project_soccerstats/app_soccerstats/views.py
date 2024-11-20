@@ -3,7 +3,7 @@ from .models import jogador_collection
 from django.http import HttpResponse
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
-from project_soccerstats.settings import CSV_ROOT, GOOGLE_SEARCH_ENGINE_ID, GOOGLE_API_KEY, CSV_SCALED, IMG_GRAPH, CSV_VALUATION, CSV_PREDICTION, IMG_GRAPH2
+from project_soccerstats.settings import CSV_ROOT, GOOGLE_SEARCH_ENGINE_ID, GOOGLE_API_KEY, CSV_SCALED, IMG_GRAPH, CSV_VALUATION, CSV_PREDICTION, IMG_GRAPH2, IMG_GRAPH3
 import matplotlib.pyplot as plt, mpld3
 import numpy as np
 import pandas as pd
@@ -187,6 +187,8 @@ def details(request, id):
     # Gerar os gráficos relacionados ao jogador
     plot_graph(jogador['Player'])
     plot_variation_for_player(df, None, jogador['Player'])  # Substitua df_0 e df_1 se necessário
+    plot_boxplot_comparison(df,jogador['Player'])
+
 
     jogadores_recomendados_nomes = calculo_jogadores_recomendados(jogador['Player'], df, "manhattan")
     jogadores_recomendados_dados = []
@@ -329,3 +331,73 @@ def plot_variation_for_player(df1, df2, player_name):
     paper_bgcolor='rgba(255, 255, 255, 0.5)'
     )
     fig.write_image(IMG_GRAPH2)
+
+
+def plot_boxplot_comparison(df, player_name):
+    # Verifica se o jogador existe no DataFrame
+   
+
+    # Obtém os dados do jogador
+    player_data = df[df['Player'] == player_name]
+    
+    # Verifica a posição do jogador
+    player_position = player_data['Pos'].values[0]
+    
+    # Define a feature relevante para cada posição
+    position_features = {
+        'FW': "Goals",  # Atacante
+        'MF': "PasTotCmp",  # Meio-campista
+        'DF': "Tkl",  # Defensor
+        'GK': "PasTotCmp",  # Goleiro
+        "DFMF": "Recov",
+        "MFDF": "PasTotCmp",
+        "DFFW": "Tkl",
+        "FWMF": "PasTotCmp",
+        "FWDF": "Assists",
+        "MFFW": "SoT%"
+    }
+    
+    # Verifica se a posição do jogador tem uma feature definida
+    if player_position not in position_features:
+        print(f"Posição {player_position} não definida para comparação.")
+        return
+    
+    feature_name = position_features[player_position]
+    
+    # Filtra os jogadores pela posição
+    position_data = df[df['Pos'] == player_position]
+    
+    # Obtém os valores da feature para o jogador de interesse e os jogadores da mesma posição
+    player_feature_value = player_data[feature_name].values[0]
+    position_feature_values = position_data[feature_name].values
+    
+    # Cria o boxplot
+    fig = go.Figure()
+
+    # Adiciona o boxplot para jogadores da mesma posição
+    fig.add_trace(go.Box(
+        y=position_feature_values,
+        boxmean='sd',  # Exibe a média e o desvio padrão
+        name=f'{player_position} - {feature_name}',
+        marker=dict(color='lightblue'),
+        jitter=0.3
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=[0], y=[player_feature_value],
+        mode='markers',
+        name=player_name,
+        marker=dict(color='red', size=10, symbol='circle')
+    ))
+
+    fig.update_layout(
+        title=f"{player_name} em relação aos {player_position} por {feature_name}",
+        yaxis_title=feature_name,
+        xaxis_title="Posição",
+        showlegend=False,
+        template="plotly_white",
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',
+        paper_bgcolor='rgba(255, 255, 255, 0.5)'
+    )
+
+    fig.write_image(IMG_GRAPH3)
