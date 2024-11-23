@@ -5,26 +5,23 @@
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
 
     <section class="HomeSection">
-        <form class="Search" method="POST" action="{% url 'home' %}">
-            {% csrf_token %}
-            <input class="SearchBar" type="text" name="query" placeholder="Pesquisar nome">
-            <button class="SearchButton" type="submit">🔎</button>
-        </form>
 
-        {% if jogadores %}
-            {% for jogador in jogadores %}
-                <a class="PlayerCard" href="{% url 'details' jogador.Rk %}">
-                    <h2>{{ jogador.Player }}</h2>
-                    <p>Nota: {{ jogador.Overall }}</p>
-                    <p>Nação: {{ jogador.Nation }}</p>
-                    <p>Time: {{ jogador.Squad }}</p>
-                    <p>Posição: {{ jogador.Pos }}</p>
+        <div class="PlayerCardContainer">
+            {% if jogadores %}
+                {% for jogador in jogadores %}
+                    <a class="PlayerCard" href="{% url 'details' jogador.Rk %}">
+                        <h2>{{ jogador.Player|truncatechars:20 }}</h2>
+                        <p>Nota: <span class="OverallHighlight">{{ jogador.Overall }}</span></p>
+                        <p>Nação: {{ jogador.Nation }}</p>
+                        <p>Time: {{ jogador.Squad }}</p>
+                        <p>Posição: {{ jogador.Pos }}</p>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <a class="PlayerCard">
+                    <h2>{{ mensagem }}</h2>
                 </a>
-            {% endfor %}
-        {% else %}
-            <a class="PlayerCard">
-                <h2>{{ mensagem }}</h2>
-            </a>
-        {% endif %}
+            {% endif %}
+        </div>
     </section>
 {% endblock content %}

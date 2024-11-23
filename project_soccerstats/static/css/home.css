@@ -3,68 +3,36 @@
     bottom: 0; 
     left: 0;
     width: 100vw; 
-    height: calc(100vh - 50px); 
+    height: calc(100vh - 80px); 
     padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     gap: 7px;
-    overflow-y: auto; 
+    overflow-y: hidden; /* Remove o scroll vertical */
+    overflow-x: auto; /* Adiciona o scroll horizontal */
     scrollbar-width: thin;
     background-color: rgba(255, 255, 255, 0.678);
-    border-radius: 15px;
+    border-radius: 0px;
 }
-.Search {
+
+.PlayerCardContainer {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 650px;
-    height: 40px;
-    /* background-color: blue; */
-}
-
-.SearchBar {
-    width: 590px;
-    height: 30px;
-    font-size: 17px;
-    border: none;
-    border-radius: 15px;
-    text-align: center;
-}
-
-.SearchBar:focus {
-    border: none;
-    outline: none;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.205);
-}
-
-.SearchButton {
-    width: 50px;
-    height: 30px;
-    font-size: 17px;
-    font-weight: bold;
-    background-color: rgb(0, 219, 0);
-    border-radius: 15px;
-    border: none;
-
-}
-
-.SearchButton:hover {
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.205);
-    cursor: pointer;
+    flex-direction: row; /* Alinha os cards horizontalmente */
+    gap: 10px; /* Espaçamento entre os cards */
 }
 
 .PlayerCard {
     display: flex;
+    flex-direction: column; /* Alinha os elementos verticalmente */
     padding: 10px;
-    width: calc(100% - 20px);
-    height: 100px;
-    gap: 15px;
+    width: 200px; /* Define uma largura fixa para os cards */
+    height: auto; /* Ajusta a altura automaticamente */
+    gap: 5px; /* Reduz o espaçamento entre os elementos */
     flex-shrink: 0;
-    align-items: center;
-    justify-content: space-evenly;
+    align-items: flex-start; /* Alinha os elementos à esquerda */
+    justify-content: center; /* Centraliza os elementos verticalmente */
     text-decoration: none;
     color: rgb(49, 49, 49);
     background-color: rgba(255, 255, 255, 0.856);
@@ -74,7 +42,17 @@
 }
 
 .PlayerCard h2:first-child {
-    margin-right: 70px;
+    margin-right: 0px;
+}
+
+.PlayerCard h2, .PlayerCard p {
+    margin: 0; /* Remove margens dos elementos internos */
+    padding: 0; /* Remove padding dos elementos internos */
+    flex: 1; /* Permite que os elementos cresçam igualmente */
+    max-width: 100%; /* Define um tamanho máximo para os elementos de texto */
+    overflow: hidden; /* Esconde o texto que ultrapassar o tamanho máximo */
+    text-overflow: ellipsis; /* Adiciona reticências ao texto que ultrapassar o tamanho máximo */
+    white-space: nowrap; /* Impede que o texto quebre em várias linhas */
 }
 
 .PlayerCard:hover {

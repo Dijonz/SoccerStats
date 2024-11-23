@@ -7,10 +7,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <title>SoccerStats</title>
+    <style>
+        /* Geral */
+        /* body {
+            font-family: "Bebas Neue", serif;;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        } */
+
+        /* Container principal */
+        .DetailSection {
+            max-width: 95%; /* Aproveitar quase toda a largura da tela */
+            margin: 20px auto;
+            padding-top: 80px; /* Ajuste conforme a altura do seu cabeçalho */
+            height: calc(100vh - 80px); 
+        }
+
+    </style>
 </head>
 <body>
     <header class="Header">
-        <a href="/" class="Logo">SoccerStats</a>
+    <a  href="/" class="Logo">
+        <span class="Logo-Soccer">Soccer</span><span class="Logo-Stats">Stats</span>
+    </a>
+
+        <form class="Search" method="POST" action="{% url 'home' %}">
+            {% csrf_token %}
+            <input class="SearchBar" type="text" name="query" placeholder="Pesquisar nome">
+            <button class="SearchButton" type="submit">🔎</button>
+        </form>
 
         <nav class="Navbar">
             <div><a href="#" id="dicionarioPosicao">Dicionário Posições</a></div>
