@@ -26,11 +26,13 @@
     text-align: center;
     margin: 10px 0;
     flex: 1; /* Ajustar para ocupar espaço disponível */
+    text-decoration: none;
 }
 
 .PlayerCard-L h2, .PlayerCard-R h2 {
     margin: 10px 0;
-    color: #0056b3;
+    text-decoration: none;
+    color: #F22C37;
 }
 
 /* Layout flexível */
@@ -62,7 +64,7 @@
     text-align: center;
     font-size: 20px;
     font-weight: bold;
-    color: #007bff;
+    color: #F22C37;
 }
 
 /* Gráficos */
@@ -99,7 +101,7 @@
 
 .FeaturesSection h2 {
     width: 100%;
-    color: #0056b3;
+    color: #F22C37;
     margin-bottom: 10px;
 }
 
@@ -141,7 +143,7 @@
 }
 
 .Recommendations a:hover {
-    background: #007bff;
+    background: #F22C37;
     color: white;
 }
 
