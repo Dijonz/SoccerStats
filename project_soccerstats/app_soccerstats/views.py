@@ -292,46 +292,76 @@ def plot_graph(jogador):
 
 #Plotar gráfico de variação de valor
 def plot_variation_for_player(df1, df2, player_name):
-
     df1 = df_1
     df2 = df_0
-
+    # Verifica se o jogador existe no DataFrame
     if player_name not in df1['Player'].values:
         print(f"O jogador {player_name} não foi encontrado no DataFrame.")
         return
 
     print(f"JOGADOR: {player_name}.")
 
+    # Obtém os valores reais e as datas
     values = df1[df1['Player'] == player_name]['Value']
     dates_real = df1[df1['Player'] == player_name]['Date']
 
+    # Obtém o último valor real
+    last_real_value = values.iloc[-1]  
+    last_real_date = dates_real.iloc[-1]  
+
+    # Obtém o valor predito e a data predita
     predicted_value = df2[df2['Player'] == player_name]['Value'].values[0]
     date_predicted = df2[df2['Player'] == player_name]['Date'].values[0]
 
     fig = go.Figure()
 
+    # Adiciona a linha dos valores reais
     fig.add_trace(go.Scatter(x=dates_real, y=values, mode='lines', name='Valores Reais', line=dict(color='blue')))
 
+    # Adiciona o ponto do valor predito
     fig.add_trace(go.Scatter(x=[date_predicted], y=[predicted_value], mode='markers', name='Valor Predito',
                              marker=dict(color='red', size=10)))
 
+    # Atualiza o layout do gráfico
     fig.update_layout(
-    xaxis_title="Data",
-    yaxis_title="Valor",
-    title=f"Variação de valor do jogador {player_name}",
-    legend=dict(
-        yanchor="top",  # Alinha a legenda pelo topo
-        y=-0.3,         # Posiciona a legenda abaixo do gráfico
-        xanchor="center",  # Centraliza a legenda horizontalmente
-        x=0.5           # Centraliza em relação ao eixo x
-    ),
-    xaxis_tickangle=45,
-    template="plotly_white",
-    plot_bgcolor='rgba(255, 255, 255, 0.0)',
-    paper_bgcolor='rgba(255, 255, 255, 0.5)'
+        xaxis_title="Data",
+        yaxis_title="Valor",
+        title=f"Variação de valor do jogador {player_name}",
+        legend=dict(
+            yanchor="top",
+            y=-0.3,
+            xanchor="center",
+            x=0.5,
+            itemsizing='constant'  # Mantém o tamanho constante dos itens da legenda
+        ),
+        xaxis_tickangle=45,
+        template="plotly_white",
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',  
+        paper_bgcolor='rgba(255, 255, 255, 0.5)'  
     )
-    fig.write_image(IMG_GRAPH2)
 
+    # Atualiza a legenda com os valores do último valor real e do valor predito
+    legend_text = (
+        f"Último Valor Real: {last_real_value} (Data: {last_real_date})<br>"
+        f"Valor Predito: {predicted_value} (Data: {date_predicted})"
+    )
+    
+    fig.add_annotation(
+        text=legend_text,
+        showarrow=False,
+        xref="paper", yref="paper",
+        x=0.5, y=-0.25,
+        align="center",
+        font=dict(size=12),
+        bgcolor="rgba(255, 255, 255, 0.8)",
+        bordercolor="black",
+        borderwidth=1,
+        borderpad=4,
+        opacity=0.8
+    )
+
+    # Salva a imagem do gráfico
+    fig.write_image(IMG_GRAPH2)
 
 def plot_boxplot_comparison(df, player_name):
     # Verifica se o jogador existe no DataFrame
