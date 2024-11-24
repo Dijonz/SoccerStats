@@ -180,7 +180,7 @@ def details(request, id):
         return HttpResponse("Player not found", status=404)
     print(jogador)
     # Imagem padrão do jogador
-    #player_image = NOT_FOUND_IMG
+    player_image = search_image(jogador)
     team_logo = jogador['Squad']
     print(team_logo)
 
@@ -210,7 +210,7 @@ def details(request, id):
         "jogadores": jogadores_recomendados_dados,
         "top_features": top_features,
         "worst_features": worst_features,
-        #"pic": player_image,
+        "pic": player_image,
         "team_logo": team_logo,
     }
 

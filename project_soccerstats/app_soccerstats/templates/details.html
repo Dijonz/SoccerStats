@@ -10,7 +10,7 @@
     <div class="DetailContainer">
         <!-- Cartão do jogador com logo do time integrado -->
         <div class="PlayerCard-L">
-            <img src="{% static 'img/not_found.png' %}" alt="Foto do Jogador">
+            <img src="{{ pic }}" alt="Foto do Jogador">
             <div class="TeamLogo">
                 <img src="{% static 'img/Logos/' %}{{ team_logo|slugify|add:'.png' }}" alt="Logo do Time">
             </div>

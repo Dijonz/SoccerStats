@@ -30,6 +30,11 @@
     text-decoration: none;
 }
 
+.PlayerCard-L img{
+    max-width: 500px;
+    max-height: 500px;
+}
+
 .PlayerCard-L h2, .PlayerCard-R h2 {
     margin: 10px 0;
     text-decoration: none;
